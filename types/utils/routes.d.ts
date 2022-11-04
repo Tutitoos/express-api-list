@@ -1,3 +1,4 @@
 import type { Express, Router } from "express";
-declare const getAllRoutes: (app: Express, router?: Router) => string[];
+import type { RouteStructur } from "./Config/types.js";
+declare const getAllRoutes: (format: number, app: Express, router?: Router) => RouteStructur[];
 export default getAllRoutes;

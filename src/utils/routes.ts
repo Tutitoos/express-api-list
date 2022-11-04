@@ -1,29 +1,45 @@
 import type { Express, Router } from "express";
 import type AppExpress from "../types/express.js";
+import type { RouteStructur } from "./Config/types.js";
 
-const getRouterRoutes = (router: Router): string[] =>
-  router.stack
+const getRoutesApi = (
+  base: AppExpress | Router
+): Array<{
+  route: Record<string, unknown>;
+}> => {
+  if ((base as Router).stack) {
+    return base.stack as Array<{
+      route: Record<string, unknown>;
+    }>;
+  }
+
+  return (base as AppExpress)._router.stack as Array<{
+    route: Record<string, unknown>;
+  }>;
+};
+
+const getRoutes = (
+  base: AppExpress | Router,
+  format: number
+): RouteStructur[] => {
+  const routes = getRoutesApi(base);
+  return routes
     .filter(({ route }) => route)
-    .map(
-      ({ route }) =>
-        `${Object.keys(route.methods)[0].toUpperCase().padEnd(7).trim()} ${
-          route.path as string
-        }`
+    .map(({ route }) =>
+      format === 1
+        ? `${Object.keys(route.methods)[0].toUpperCase().padEnd(7).trim()} ${
+            route.path as string
+          }`
+        : {
+            route: route.path as string,
+            type: Object.keys(route.methods)[0].toUpperCase().padEnd(7).trim(),
+          }
     );
+};
 
-const getAppRoutes = (app: AppExpress): string[] =>
-  (app._router as AppExpress).stack
-    .filter(({ route }) => route)
-    .map(
-      ({ route }) =>
-        `${Object.keys(route.methods)[0].toUpperCase().padEnd(7).trim()} ${
-          route.path as string
-        }`
-    );
-
-const getAllRoutes = (app: Express, router?: Router) => {
-  const appRoutes = getAppRoutes(app as AppExpress);
-  const routerRoutes = router ? getRouterRoutes(router) : [];
+const getAllRoutes = (format: number, app: Express, router?: Router) => {
+  const appRoutes = getRoutes(app as AppExpress, format);
+  const routerRoutes = router ? getRoutes(router, format) : [];
   return [...appRoutes, ...routerRoutes];
 };
 
