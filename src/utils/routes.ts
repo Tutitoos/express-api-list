@@ -1,5 +1,5 @@
 import type { Express, Router } from "express";
-import type AppExpress from "../types/express";
+import type AppExpress from "../types/express.js";
 
 const getRouterRoutes = (router: Router): string[] =>
   router.stack
