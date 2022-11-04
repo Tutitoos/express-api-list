@@ -12,13 +12,7 @@ const getRouterRoutes = (router: Router): string[] =>
     );
 
 const getAppRoutes = (app: AppExpress): string[] =>
-  (
-    app._router as {
-      stack: Array<{
-        route: Record<string, unknown>;
-      }>;
-    }
-  ).stack
+  (app._router as AppExpress).stack
     .filter(({ route }) => route)
     .map(
       ({ route }) =>

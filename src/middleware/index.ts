@@ -1,17 +1,6 @@
 import type { Request, Response } from "express";
 import responseTime from "response-time";
-import type FontColors from "../types/index.js";
-
-const fontColor: FontColors = {
-  black: "30",
-  red: "31",
-  green: "32",
-  yellow: "33",
-  blue: "34",
-  magneta: "35",
-  cyan: "36",
-  white: "37",
-};
+import fontColor from "../utils/styles.js";
 
 const getStatus = (code: number): string => {
   if (code >= 500) return `\x1b[${fontColor.red}m${code}\x1b[0m`;
@@ -40,8 +29,10 @@ const middleware = responseTime(
   (request: Request, response: Response, time: number): void => {
     const { method: methodAction, url } = request;
     const { statusCode: statusCodeAction } = response;
+
     const statusCode = getStatus(statusCodeAction);
     const method = getMethod(methodAction);
+
     console.log(`${method} ${statusCode} ${url} ${time.toFixed(3)} ms`);
   }
 );
